@@ -25,7 +25,7 @@ type Terminal struct {
 }
 
 // GetMockTerminals retourne la liste des terminaux pour la démo
-func GetMockyTerminals() []Terminal {
+func GetMockTerminals() []Terminal {
 	now := time.Now()
 	return []Terminal{
 		{
@@ -74,7 +74,7 @@ func GetMockyTerminals() []Terminal {
 }
 
 // RandomizeState modifie aléatoirement le statut et la batterie du terminal (pour simulation)
-func (t *Terminal) RandomizeState() {
+func (t *Terminal) RandomizeStatus() {
 	statuses := []Status{StatusOK, StatusWarning, StatusError, StatusSyncing}
 	t.Status = statuses[rand.Intn(len(statuses))]
 
