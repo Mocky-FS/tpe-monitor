@@ -2,7 +2,7 @@
 
 Dashboard TUI pour le monitoring de terminaux de paiement.
 
-
+![Démo](images/tpegif.gif)
 
 ## 🚀 Installation & Lancement
 ```bash
