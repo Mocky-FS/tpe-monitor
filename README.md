@@ -24,6 +24,7 @@ Auto-refresh toutes les 10 secondes.
 
 - Go 1.25
 - [Bubble Tea](https://github.com/charmbracelet/bubbletea) - TUI framework
+- [Lipgloss](https://github.com/charmbracelet/lipgloss) - Styling & colours
 - [go-humanize](https://github.com/dustin/go-humanize) - Date formatting
 
 ## 📁 Structure
@@ -31,6 +32,7 @@ Auto-refresh toutes les 10 secondes.
 cmd/main.go              # Point d'entrée
 internal/model/          # Logique Bubble Tea
 internal/terminal/       # Données des terminaux
+internal/view/           # Rendu et styling Lipgloss
 ```
 
 ## 🎯 Contexte
