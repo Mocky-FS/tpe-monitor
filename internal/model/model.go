@@ -1,13 +1,12 @@
 package model
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
 	"github.com/Mocky-FS/tpe-monitor/internal/terminal"
+	"github.com/Mocky-FS/tpe-monitor/internal/view"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/dustin/go-humanize"
 )
 
 // tickMsg est envoyé périodiquement pour le refresh auto
@@ -72,55 +71,17 @@ func (m Model) View() string {
 		return "Au revoir !\n"
 	}
 
-	s := "TPE Monitor v1.0\n\n"
+	s := view.RenderTitle()
 
 	// Afficher chaque terminal
 	for i, t := range m.terminals {
-		cursor := " "
-		if m.cursor == i {
-			cursor = ">"
-		}
-
-		// Format: > TPE-001 Terminal Paris 1  Emoji [OK]  battery: 85%  Last Sync: 5m ago
-		s += fmt.Sprintf("%s %-8s %-23s %s %-10s %3d%% %s\n",
-			cursor,
-			t.ID,
-			t.Name,
-			t.StatusEmoji(),
-			t.Status,
-			t.Battery,
-			humanize.Time(t.LastSync),
-		)
+		s += view.RenderTerminal(t, m.cursor == i) + "\n"
 	}
 
-	// Barre de statut
-	s += "\n" + "─────────────────────────────────────────────────────────────\n"
-
-	ok, warning, err, syncing := m.countByStatus()
-	s += fmt.Sprintf("%d terminaux • %d OK • %d Warning • %d Error • %d Syncing\n\n",
-		len(m.terminals), ok, warning, err, syncing)
-	
-	// Aide
-	s += "[↑↓] Navigate  [r] Refresh  [q] Quit\n"
+	s += view.RenderStatusBar(m.terminals)
+	s += view.RenderHelp()
 
 	return s
-}
-
-// countByStatus compte les terminaux par statut
-func (m Model) countByStatus() (ok, warning, err, syncing int) {
-	for _, t := range m.terminals {
-		switch t.Status {
-		case terminal.StatusOK:
-			ok++
-		case terminal.StatusWarning:
-			warning++
-		case terminal.StatusError:
-			err++
-		case terminal.StatusSyncing:
-			syncing++
-		}
-	}
-	return
 }
 
 // tickCmd retourne une commande pour le prochain tick
@@ -142,4 +103,3 @@ func randomizeTerminals(m *Model) tea.Cmd {
 		return nil
 	}
 }
-
