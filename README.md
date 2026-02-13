@@ -15,8 +15,8 @@ go run cmd/main.go
 ## ⌨️ Utilisation
 
 - `↑↓` : Naviguer
-- `r` : Refresh manuel
-- `q` : Quitter
+- `r`  : Refresh manuel
+- `q`  : Quitter
 
 Auto-refresh toutes les 10 secondes.
 

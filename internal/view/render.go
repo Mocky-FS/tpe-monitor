@@ -23,12 +23,6 @@ var (
 			Background(lipgloss.Color("#0066CC")).
 			Padding(0, 2)
 
-	// style de la bordure principale
-	borderStyle = lipgloss.NewStyle().
-			Border(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color("#0066CC")).
-			Padding(0, 1)
-
 	// style de la barre de statut
 	statusBarStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#888888"))
@@ -58,10 +52,8 @@ func RenderTerminal(t terminal.Terminal, selected bool, sp spinner.Model) string
 	// formater le statut avec sa couleur
 	status := renderStatus(t, sp)
 
-	// formater la batterie
 	battery := renderBattery(t.Battery)
 
-	// formater le temps
 	lastSync := humanize.Time(t.LastSync)
 
 	// construire la ligne
@@ -178,6 +170,6 @@ func RenderDetail(t terminal.Terminal) string {
 		labelStyle.Render("Location:") + " " + t.Location + "\n" +
 		labelStyle.Render("Merchant:") + " " + t.Merchant + "\n\n" +
 		statusBarStyle.Render("Press ESC to close")
-	
+
 	return "\n" + detailStyle.Render(content)
 }
