@@ -34,10 +34,18 @@ var (
 			Foreground(lipgloss.Color("#888888"))
 
 	// styles des statuts
-	okStyle      = lipgloss.NewStyle().Foreground(lipgloss.Color("#00FF00")).Bold(true)
-	warningStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#FFA500")).Bold(true)
-	errorStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#FF4444")).Bold(true)
-	syncingStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#00BFFF")).Bold(true)
+	okStyle = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#00FF00")).
+		Bold(true)
+	warningStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#FFA500")).
+			Bold(true)
+	errorStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#FF4444")).
+			Bold(true)
+	syncingStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#00BFFF")).
+			Bold(true)
 )
 
 // RenderTitle affiche le titre de l'application
@@ -88,8 +96,11 @@ func RenderStatusBar(terminals []terminal.Terminal) string {
 }
 
 // RenderHelp affiche les touches disponibles
-func RenderHelp() string {
-	return statusBarStyle.Render("\n  ↑↓ naviguer  •  r refresh  •  q quitter")
+func RenderHelp(viewDetail bool) string {
+	if viewDetail {
+		return statusBarStyle.Render("\n  ESC fermer ")
+	}
+	return statusBarStyle.Render("\n  ↑↓ naviguer  •  enter détails  •  r refresh  •  q quitter")
 }
 
 // renderStatus retourne le statut coloré
@@ -118,7 +129,7 @@ func renderBattery(level int) string {
 	case level > 50:
 		return okStyle.Render(label)
 	case level > 20:
-		return warningStyle.Render(label)  
+		return warningStyle.Render(label)
 	default:
 		return errorStyle.Render(label)
 	}
@@ -139,4 +150,34 @@ func countByStatus(terminals []terminal.Terminal) (ok, warning, err, syncing int
 		}
 	}
 	return
+}
+
+// RenderDetail affiche la vue detaillée d'un terminal
+func RenderDetail(t terminal.Terminal) string {
+	// Style pour la bordure de la vue detaillée
+	detailStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("#0066CC")).
+		Padding(1, 2).
+		Width(60)
+
+	labelStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#888888")).
+		Width(20)
+
+	title := titleStyle.Render(fmt.Sprintf("🖥️  %s - %s", t.ID, t.Name))
+	status := renderStatus(t, spinner.Model{})
+	battery := renderBattery(t.Battery)
+	lastSync := humanize.Time(t.LastSync)
+
+	content := title + "\n\n" +
+		labelStyle.Render("Statut:") + " " + status + "\n" +
+		labelStyle.Render("Batterie:") + " " + battery + "\n" +
+		labelStyle.Render("Last Sync:") + " " + lastSync + "\n" +
+		labelStyle.Render("Firmware:") + " " + t.FirmwareVersion + "\n" +
+		labelStyle.Render("Location:") + " " + t.Location + "\n" +
+		labelStyle.Render("Merchant:") + " " + t.Merchant + "\n\n" +
+		statusBarStyle.Render("Press ESC to close")
+	
+	return "\n" + detailStyle.Render(content)
 }

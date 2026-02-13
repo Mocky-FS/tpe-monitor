@@ -17,11 +17,14 @@ const (
 
 // Terminal représente un terminal de paiement électronique
 type Terminal struct {
-	ID       string
-	Name     string
-	Status   Status
-	Battery  int
-	LastSync time.Time
+	ID       			string
+	Name     			string
+	Status   			Status
+	Battery  			int
+	LastSync 			time.Time
+	FirmwareVersion 	string
+	Location 			string
+	Merchant 			string
 }
 
 // GetMockTerminals retourne la liste des terminaux pour la démo
@@ -34,6 +37,9 @@ func GetMockTerminals() []Terminal {
 			Status:   StatusOK,
 			Battery:  85,
 			LastSync: now.Add(-27 * time.Minute),
+			FirmwareVersion: "v2.3.1",
+			Location: "Narbonne - Zone Bonne Source",
+			Merchant: "Carrefour Narbonne",
 		},
 		{
 			ID:       "TPE-002",
@@ -41,6 +47,9 @@ func GetMockTerminals() []Terminal {
 			Status:   StatusWarning,
 			Battery:  42,
 			LastSync: now.Add(-3 * time.Minute),
+			FirmwareVersion: "v2.3.1",
+			Location: "Toulouse - Zone Portet-sur-Garonne",
+			Merchant: "Auchan Toulouse Portet",
 		},
 		{
 			ID:       "TPE-003",
@@ -48,6 +57,9 @@ func GetMockTerminals() []Terminal {
 			Status:   StatusOK,
 			Battery:  27,
 			LastSync: now.Add(-11 * time.Minute),
+			FirmwareVersion: "v2.3.1",
+			Location: "Perpignan - Zone Saint Charles",
+			Merchant: "Leclerc Perpignan Saint Charles",
 		},
 		{
 			ID:       "TPE-004",
@@ -55,6 +67,9 @@ func GetMockTerminals() []Terminal {
 			Status:   StatusError,
 			Battery:  91,
 			LastSync: now.Add(-9 * time.Minute),
+			FirmwareVersion: "v2.3.1",
+			Location: "Saint Cyprien - Zone Port Leucate",
+			Merchant: "Intermarché Saint Cyprien",
 		},
 		{
 			ID:       "TPE-005",
@@ -62,6 +77,9 @@ func GetMockTerminals() []Terminal {
 			Status:   StatusSyncing,
 			Battery:  63,
 			LastSync: now.Add(-39 * time.Minute),
+			FirmwareVersion: "v2.3.1",
+			Location: "Rivesaltes - Zone Leclerc Rivesaltes",
+			Merchant: "Leclerc Rivesaltes",
 		},
 		{
 			ID:       "TPE-006",
@@ -69,6 +87,9 @@ func GetMockTerminals() []Terminal {
 			Status:   StatusOK,
 			Battery:  8,
 			LastSync: now.Add(-15 * time.Minute),
+			FirmwareVersion: "v2.3.1",
+			Location: "Thuir - Zone Intermarché Thuir",
+			Merchant: "Intermarché Thuir",
 		},
 	}
 }

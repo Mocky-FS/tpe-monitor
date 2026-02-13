@@ -2,6 +2,7 @@ package model
 
 import (
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/Mocky-FS/tpe-monitor/internal/terminal"
@@ -16,10 +17,11 @@ type tickMsg time.Time
 
 // Model représente l'état de l'application
 type Model struct {
-	terminals []terminal.Terminal
-	cursor    int
-	quitting  bool
-	spinner   spinner.Model
+	terminals  []terminal.Terminal
+	cursor     int
+	quitting   bool
+	spinner    spinner.Model
+	viewDetail bool
 }
 
 func New() Model {
@@ -64,6 +66,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "r":
 			// Refresh manuel
 			return m, randomizeTerminals(&m)
+
+		case "enter":
+			// basculer la vue detaillée
+			m.viewDetail = !m.viewDetail
+
+		case "esc":
+			// fermer la vue detaillée
+			if m.viewDetail {
+				m.viewDetail = false
+			}
 		}
 
 	case spinner.TickMsg:
@@ -84,20 +96,26 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	if m.quitting {
-		return "Au revoir !\n"
+		return "Good Bye !\n"
 	}
 
-	s := view.RenderTitle()
+	if m.viewDetail {
+		return view.RenderDetail(m.terminals[m.cursor])
+	}
+	
+	var s strings.Builder
+	s.WriteString(view.RenderTitle())
 
 	// Afficher chaque terminal
 	for i, t := range m.terminals {
-		s += view.RenderTerminal(t, m.cursor == i, m.spinner) + "\n"
+		s.WriteString(view.RenderTerminal(t, m.cursor == i, m.spinner))
+		s.WriteString("\n")
 	}
 
-	s += view.RenderStatusBar(m.terminals)
-	s += view.RenderHelp()
+	s.WriteString(view.RenderStatusBar(m.terminals))
+	s.WriteString(view.RenderHelp(m.viewDetail))
 
-	return s
+	return s.String()
 }
 
 // tickCmd retourne une commande pour le prochain tick
