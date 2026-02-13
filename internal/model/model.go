@@ -6,7 +6,9 @@ import (
 
 	"github.com/Mocky-FS/tpe-monitor/internal/terminal"
 	"github.com/Mocky-FS/tpe-monitor/internal/view"
+	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 // tickMsg est envoyé périodiquement pour le refresh auto
@@ -17,18 +19,27 @@ type Model struct {
 	terminals []terminal.Terminal
 	cursor    int
 	quitting  bool
+	spinner   spinner.Model
 }
 
 func New() Model {
+	s := spinner.New()
+	s.Spinner = spinner.Dot
+	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#00BFFF"))
+
 	return Model{
 		terminals: terminal.GetMockTerminals(),
 		cursor:    0,
+		spinner:   s,
 	}
 }
 
 // Initialise le programme
 func (m Model) Init() tea.Cmd {
-	return tickCmd()
+	return tea.Batch(
+		tickCmd(),
+		m.spinner.Tick,
+	)
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -55,6 +66,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, randomizeTerminals(&m)
 		}
 
+	case spinner.TickMsg:
+		var cmd tea.Cmd
+		m.spinner, cmd = m.spinner.Update(msg)
+		return m, cmd
+
 	case tickMsg:
 		// Refresh auto toutes les 10 sec
 		return m, tea.Batch(
@@ -75,7 +91,7 @@ func (m Model) View() string {
 
 	// Afficher chaque terminal
 	for i, t := range m.terminals {
-		s += view.RenderTerminal(t, m.cursor == i) + "\n"
+		s += view.RenderTerminal(t, m.cursor == i, m.spinner) + "\n"
 	}
 
 	s += view.RenderStatusBar(m.terminals)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Mocky-FS/tpe-monitor/internal/terminal"
+	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/dustin/go-humanize"
 )
@@ -45,9 +46,9 @@ func RenderTitle() string {
 }
 
 // RenderTerminal affiche une ligne terminal
-func RenderTerminal(t terminal.Terminal, selected bool) string {
+func RenderTerminal(t terminal.Terminal, selected bool, sp spinner.Model) string {
 	// formater le statut avec sa couleur
-	status := renderStatus(t)
+	status := renderStatus(t, sp)
 
 	// formater la batterie
 	battery := renderBattery(t.Battery)
@@ -92,7 +93,7 @@ func RenderHelp() string {
 }
 
 // renderStatus retourne le statut coloré
-func renderStatus(t terminal.Terminal) string {
+func renderStatus(t terminal.Terminal, sp spinner.Model) string {
 	label := fmt.Sprintf("%s %-8s", t.StatusEmoji(), t.Status)
 	switch t.Status {
 	case terminal.StatusOK:
@@ -102,7 +103,7 @@ func renderStatus(t terminal.Terminal) string {
 	case terminal.StatusError:
 		return errorStyle.Render(label)
 	case terminal.StatusSyncing:
-		return syncingStyle.Render(label)
+		return syncingStyle.Render(sp.View() + " Syncing")
 	default:
 		return label
 	}
@@ -117,7 +118,7 @@ func renderBattery(level int) string {
 	case level > 50:
 		return okStyle.Render(label)
 	case level > 20:
-		return warningStyle.Render(label)
+		return warningStyle.Render(label)  
 	default:
 		return errorStyle.Render(label)
 	}
